@@ -99,15 +99,122 @@ catch ( err ) {
 
 }
 
+client.on("message", message => {
+    const ch_name = message.content;
+    if (message.author.bot) return;
+    if (message.channel.topic === "フリースレッド") {
+      message.channel
+        .send({
+          embed: {
+            color: "RANDOM",
+            title:
+              "**" +
+              ch_name +
+              "**と言うチャンネルを作りますか?",
+            description:
+              "1分以内に下のリアクションを押してください。\n⭕:作る\n❌:キャンセル\nリアクションを押すとチャンネルが出来ます。"
+          }
+        })
+        .then(sentMessage => {
+          sentMessage.react("⭕").then(r => {
+            sentMessage.react("❌");
+          });
+          sentMessage
+            .awaitReactions(
+              (reaction, user) =>
+                user.id == message.author.id &&
+                (reaction.emoji.name == "⭕" || reaction.emoji.name == "❌"),
+              { max: 1, time: 60000 }
+            )
+            .then(collected => {
+              if (collected.first().emoji.name == "⭕") {
+                message.guild.channels
+                  .create(ch_name, {
+                    type: "text",
+                    topic: message.author.username + "が作成。",
+                    parent: "733952362271604799",
+                    permissionOverwrites: [
+                      {
+                        id: message.author.id,
+                        allow: ["VIEW_CHANNEL"]
+                      }
+                    ]
+                  })
+
+                  .then(ch => {
+                    sentMessage.edit({
+                      embed: {
+                        color: "RANDOM",
+                        title: "チャンネルを作りました。",
+                        description: "チャンネル➜<#" + ch.id + ">"
+                      }
+                    });
+let obj = {
+            ch_id: ch.id,
+            user_id: message.member.id,
+          }
  
+          // チャンネルIDとユーザーIDを追加してJSONファイルに出力
+          ch_log.channels.push( obj );
+          write_json( ch_log_filename, ch_log );
+        })
+        .catch( (err) => { console.log( err ); });
+    }
+    else {
+      message.channel.send( '同名のチャンネルが既に存在しています' );
+    }
+                    ch.send(
+                      message.member.displayName +
+                        "が作成しました。\nこのチャンネルを間違えて作ってしまった、または消したいと思ったら⭕を押してください。\n特に消す予定なしって方は❌を押してください。"
+                    ).then(msg => {
+                      msg.react("⭕").then(r => {
+                        msg.react("❌");
+                      });
+                      msg
+                        .awaitReactions(
+                          (reaction, user) =>
+                            user.id == message.author.id &&
+                            (reaction.emoji.name == "⭕" ||
+                              reaction.emoji.name == "❌"),
+                          { max: 1 }
+                        )
+                        .then(collected => {
+                          if (collected.first().emoji.name == "⭕") {
+                            msg.edit("チャンネルを消します。");
+                            msg.channel.delete();
+                          } else
+                            msg.edit("キャンセルされました。").then(mes => {
+                              mes.delete();
+                            });
+                        })
+                        .catch(() => {
+                          msg.edit("キャンセルされました");
+                        });
+                    });
+                  });
+              } else
+                sentMessage.edit({
+                  embed: {
+                    color: "RANDOM",
+                    description: "キャンセルされました。"
+                  }
+                });
+            })
+            .catch(() => {
+              message.edit({
+                embed: {
+                  color: "RANDOM",
+                  description:
+                    "リアクションが一分間押されなかったのでキャンセルされました。"
+                }
+              });
+            });
+        });
+    }
+    if (message.guild.channels.exists(c=>c.name=ch_name)) return message.channel.send("同名のチャンネルが存在します。")
+});
 
- 
-
- 
-
-
-
-client.on("message", (message) =>
+client.on("message", message =>
 
 {
 
@@ -115,7 +222,7 @@ client.on("message", (message) =>
 
   const command = arg.shift();
 
-  const ch_name = arg[0]; 
+  const ch_name = args[0]; 
  
   if ( command === 'p!delete' )
 
