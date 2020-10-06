@@ -136,7 +136,7 @@ client.on("message", message => {
                     permissionOverwrites: [
                       {
                         id: message.author.id,
-                        allow: ["VIEW_CHANNEL"]
+                        allow: ['MANAGE_CHANNELS']
                       }
                     ]
                   })
