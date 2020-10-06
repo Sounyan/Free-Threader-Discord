@@ -1,0 +1,24 @@
+{
+  "name": "glitch-discord-bot",
+  "version": "0.0.0",
+  "description": "discord bot sample on Glitch",
+  "main": "main.js",
+  "engines": {
+    "node": "12.x"
+  },
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "inspect": "^0.0.2",
+    "util": "^0.12.3",
+    "node-mecab": "^0.0.4",
+    "canvas": "^2.6.1",
+    "ms": "^2.1.2",
+    "cron": "^1.8.2",
+    "node-cron": "^2.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js",
+    "test": "node main.js"
+  }
+}
