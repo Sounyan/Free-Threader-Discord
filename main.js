@@ -1,5 +1,6 @@
 // Response for Uptime Robot
 const http = require("http");
+const fs = require('fs');
 
 function getType(_url) {
   var types = {
@@ -40,128 +41,152 @@ var server = http.createServer(function(req, res) {
 });
 var port = process.env.PORT || 3000;
 server.listen(port, function() {
-  console.log("ok");
+  console.log("Web is OK.🙆");
 });
 
 // Discord bot implements
 const discord = require("discord.js");
 const client = new discord.Client();
-const Canvas = require("canvas");
-const prefix = "Sc+";
-const fs = require("fs");
-const cron = require("node-cron");
-const { inspect } = require("util");
-const ms = require("ms");
 
 client.on("ready", message => {
-  console.log("bot is ready!");
-  client.user.setActivity("リニューアル中です!");
+  console.log("Bot is OK.🙆");
+  client.user.setActivity("Free Threader | Made by Lovely Cat.");
 });
 
+const write_json = ( filename, obj ) =>
 
-client.on("message", message => {
-  const prob = Math.floor(Math.random() * 100);
+{
 
-  //乱数の値が10以下だったら
-  if (message.channel.id === "726000952296865813" && prob < 1) {
-    message.channel.send("https://discord.gg/ChRCsyN",
-                         {embed: {
-      color: "RANDOM",
-                           
-      title: "おっと、ここで雑談してますね?",
-      description: "ここで雑談するのもいいんですが雑談に特化したサーバーがあるんですよ〜\n是非このサーバーへ〜"
-    }})
-  }
-})
+  fs.writeFile( filename, JSON.stringify( obj, null, '\t' ), (e) => {
 
-const messageId　= '742265836244434994'
-const channelId = '726000945309286460'
-const emojiId =　'726000967627046912'
-client.once('ready', () => {
-  client.channels.fetch(channelId)
-    .then(channel => channel.messages.fetch(messageId))
-    .catch(console.error)
-})
+    if ( e ) {
 
-client.on('messageReactionAdd', async (reaction,user) => {
-  const message = reaction.message
-  const emoji = reaction.emoji
-  if (emoji.id !== emojiId) return
-  if (message.id !== messageId) return
-  if (reaction.message.guild.member(user.id).roles.cache.has("726000947175620629")) return
-  reaction.message.guild.member(user.id).roles.add("742271596579782746")
-})
+      console.log( e );
 
-const messageId1　= '742630590234361907'
-const channelId1 = '742623891301597194'
-const emojiId1 =　'726000967627046912'
-client.once('ready', () => {
-  client.channels.fetch(channelId1)
-    .then(channel => channel.messages.fetch(messageId1))
-    .catch(console.error)
-})
+      throw e;
 
-client.on('messageReactionAdd', async (reaction,user) => {
-  const message = reaction.message
-  const emoji = reaction.emoji
-  if (emoji.id !== emojiId1) return
-  if (message.id !== messageId1) return
-  if (reaction.message.guild.member(user.id).roles.cache.has("742632018029969418")) return
-reaction.message.guild.member(user.id).roles.add("742632018029969418")
-})
-
-client.on("message", async message => {
-  // This event will run on every single message received, from any channel or DM.
-
-  // It's good practice to ignore other bots. This also makes your bot ignore itself
-  // and not get into a spam loop (we call that "botception").
-
-  // Also good practice to ignore any message that does not start with our prefix,
-  // which is set in the configuration file.
-  if (message.content.indexOf(prefix) !== 0) return;
-
-  // Here we separate our "command" name, and our "arguments" for the command.
-  // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
-  // command = say
-  // args = ["Is", "this", "the", "real", "life?"]
-  const args = message.content
-    .slice(prefix.length)
-    .trim()
-    .split(/ +/g);
-  const command = args.shift().toLowerCase();
-
-  if (command === "eval") {
-    // Put your userID here
-    if (message.author.id !== "645581794267234315") return;
-
-    let evaled;
-    try {
-      evaled = await eval(args.join(" "));
-      message.channel.send(inspect(evaled));
-      message.react("check");
-      console.log(inspect(evaled));
-    } catch (error) {
-      console.error(error);
-      message.channel.send({
-        embed: {
-          color: 16757683,
-          title: "⚠エラーが発生しました…⚠",
-          description: "エラー内容```" + error + "```"
-        }
-      });
-      message.react("uncheck");
     }
-  }
+
+  });
+
+}
 
  
 
-  if (command === "topic") {
-    const topic = args.join(" ");
-    message.channel.setTopic("```"+topic+"```")
+
+
+ 
+
+const ch_log_filename = 'ch_log.json';
+
+ 
+
+let ch_log ={};
+
+// ch_log.jsonが存在していれば読み込み、無ければchannels配列を作成
+
+try {
+
+  const str = fs.readFileSync( ch_log_filename, 'utf8' );
+
+  ch_log = JSON.parse( str );
+
+}
+
+catch ( err ) {
+
+  ch_log.channels = new Array();
+
+}
+
+ 
+
+ 
+
+ 
+
+
+
+client.on("message", (message) =>
+
+{
+
+  let args = message.content.split( /\s+/ );
+
+  const command = arg.shift();
+
+  const ch_name = arg[0]; 
+ 
+  if ( command === 'p!delete' )
+
+  {
+
+    let channel = message.guild.channels.cache.find(c=>c.name == ch_name);
+
+ 
+
+    if ( channel )
+
+    {
+
+      const index = ch_log.channels.findIndex( (obj)=>{
+
+        return obj.ch_id === channel.id;
+
+      });
+
+ 
+
+      // 削除しようとしているユーザーが作成者かチェック
+
+      if ( message.member.id === ch_log.channels[index].user_id )
+
+      {
+
+        channel.delete()
+
+          .then( (ch) => {
+
+            // 削除したチャンネルじゃなければ削除メッセージを送信
+
+            if ( ch.id !== message.channel.id ) {
+
+              message.channel.send( ch_name + 'チャンネルを削除しました' );
+
+            }
+
+ 
+
+            // 削除したチャンネルのログを削除してJSONファイルに出力
+
+            ch_log.channels.splice( index, 1 );
+
+            write_json( ch_log_filename, ch_log );
+
+          })
+
+          .catch( (err) => { console.log( err ); } );
+
+      }
+
+      else {
+
+        message.channel.send( ch_name + 'チャンネルを削除する権限がありません' );
+
+      }
+
+    }
+
+    else {
+
+      message.channel.send( ch_name + 'チャンネルは存在しません' );
+
+    }
+
   }
-  })
 
+});
 
+ 
 
-
-client.login("Njk2NTgxMzkyMzE4MDcwODI0.XxRAiQ.F496_S9XSqLDyVhexmtSByJdx2M");
+client.login(token);
