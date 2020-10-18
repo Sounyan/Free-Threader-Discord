@@ -40,14 +40,14 @@ var server = http.createServer(function(req, res) {
 });
 var port = process.env.PORT || 3000;
 server.listen(port, function() {
-  console.log("ok");
+  console.log("Web is Ok!");
 });
 
 // Discord bot implements
 const discord = require("discord.js");
 const client = new discord.Client();
 const Canvas = require("canvas");
-const prefix = "Sc+";
+const prefix = "l!";
 const fs = require("fs");
 const cron = require("node-cron");
 const { inspect } = require("util");
