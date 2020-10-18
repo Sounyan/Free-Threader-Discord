@@ -1,6 +1,5 @@
 // Response for Uptime Robot
 const http = require("http");
-const fs = require('fs');
 
 function getType(_url) {
   var types = {
@@ -41,259 +40,123 @@ var server = http.createServer(function(req, res) {
 });
 var port = process.env.PORT || 3000;
 server.listen(port, function() {
-  console.log("Web is OK.🙆");
+  console.log("ok");
 });
 
 // Discord bot implements
 const discord = require("discord.js");
 const client = new discord.Client();
+const Canvas = require("canvas");
+const prefix = "Sc+";
+const fs = require("fs");
+const cron = require("node-cron");
+const { inspect } = require("util");
+const ms = require("ms");
 
 client.on("ready", message => {
-  console.log("Bot is OK.🙆");
-  client.user.setActivity("Free Threader | Made by Lovely Cat.");
+  console.log("bot is ready!");
+  client.user.setActivity("リニューアル中です!");
 });
 
-const write_json = ( filename, obj ) =>
-
-{
-
-  fs.writeFile( filename, JSON.stringify( obj, null, '\t' ), (e) => {
-
-    if ( e ) {
-
-      console.log( e );
-
-      throw e;
-
-    }
-
-  });
-
-}
-
- 
-
-
-
- 
-
-const ch_log_filename = 'ch_log.json';
-
- 
-
-let ch_log ={};
-
-// ch_log.jsonが存在していれば読み込み、無ければchannels配列を作成
-
-try {
-
-  const str = fs.readFileSync( ch_log_filename, 'utf8' );
-
-  ch_log = JSON.parse( str );
-
-}
-
-catch ( err ) {
-
-  ch_log.channels = new Array();
-
-}
 
 client.on("message", message => {
-    const ch_name = message.content;
-    if (message.author.bot) return;
-    if (message.channel.topic === "フリースレッド") {
-      message.channel
-        .send({
-          embed: {
-            color: "RANDOM",
-            title:
-              "**" +
-              ch_name +
-              "**と言うチャンネルを作りますか?",
-            description:
-              "1分以内に下のリアクションを押してください。\n⭕:作る\n❌:キャンセル\nリアクションを押すとチャンネルが出来ます。"
-          }
-        })
-        .then(sentMessage => {
-          sentMessage.react("⭕").then(r => {
-            sentMessage.react("❌");
-          });
-          sentMessage
-            .awaitReactions(
-              (reaction, user) =>
-                user.id == message.author.id &&
-                (reaction.emoji.name == "⭕" || reaction.emoji.name == "❌"),
-              { max: 1, time: 60000 }
-            )
-            .then(collected => {
-              if (collected.first().emoji.name == "⭕") {
-                message.guild.channels
-                  .create(ch_name, {
-                    type: "text",
-                    topic: message.author.username + "が作成。",
-                    parent: "733952362271604799",
-                    permissionOverwrites: [
-                      {
-                        id: message.author.id,
-                        allow: ['MANAGE_CHANNELS']
-                      }
-                    ]
-                  })
+  const prob = Math.floor(Math.random() * 100);
 
-                  .then(ch => {
-                    sentMessage.edit({
-                      embed: {
-                        color: "RANDOM",
-                        title: "チャンネルを作りました。",
-                        description: "チャンネル➜<#" + ch.id + ">"
-                      }
-                    });
-let obj = {
-            ch_id: ch.id,
-            user_id: message.member.id,
-          }
- 
-          // チャンネルIDとユーザーIDを追加してJSONファイルに出力
-          ch_log.channels.push( obj );
-          write_json( ch_log_filename, ch_log );
-        })
-        .catch( (err) => { console.log( err ); });
-    }
-    else {
-      message.channel.send( '同名のチャンネルが既に存在しています' );
-    }
-                    ch.send(
-                      message.member.displayName +
-                        "が作成しました。\nこのチャンネルを間違えて作ってしまった、または消したいと思ったら⭕を押してください。\n特に消す予定なしって方は❌を押してください。"
-                    ).then(msg => {
-                      msg.react("⭕").then(r => {
-                        msg.react("❌");
-                      });
-                      msg
-                        .awaitReactions(
-                          (reaction, user) =>
-                            user.id == message.author.id &&
-                            (reaction.emoji.name == "⭕" ||
-                              reaction.emoji.name == "❌"),
-                          { max: 1 }
-                        )
-                        .then(collected => {
-                          if (collected.first().emoji.name == "⭕") {
-                            msg.edit("チャンネルを消します。");
-                            msg.channel.delete();
-                          } else
-                            msg.edit("キャンセルされました。").then(mes => {
-                              mes.delete();
-                            });
-                        })
-                        .catch(() => {
-                          msg.edit("キャンセルされました");
-                        });
-                    });
-                  });
-              } else
-                sentMessage.edit({
-                  embed: {
-                    color: "RANDOM",
-                    description: "キャンセルされました。"
-                  }
-                });
-            })
-            .catch(() => {
-              message.edit({
-                embed: {
-                  color: "RANDOM",
-                  description:
-                    "リアクションが一分間押されなかったのでキャンセルされました。"
-                }
-              });
-            });
-        });
-    }
-    if (message.guild.channels.exists(c=>c.name=ch_name)) return message.channel.send("同名のチャンネルが存在します。")
-});
+  //乱数の値が10以下だったら
+  if (message.channel.id === "726000952296865813" && prob < 1) {
+    message.channel.send("https://discord.gg/ChRCsyN",
+                         {embed: {
+      color: "RANDOM",
+                           
+      title: "おっと、ここで雑談してますね?",
+      description: "ここで雑談するのもいいんですが雑談に特化したサーバーがあるんですよ〜\n是非このサーバーへ〜"
+    }})
+  }
+})
 
-client.on("message", message =>
+const messageId　= '742265836244434994'
+const channelId = '726000945309286460'
+const emojiId =　'726000967627046912'
+client.once('ready', () => {
+  client.channels.fetch(channelId)
+    .then(channel => channel.messages.fetch(messageId))
+    .catch(console.error)
+})
 
-{
+client.on('messageReactionAdd', async (reaction,user) => {
+  const message = reaction.message
+  const emoji = reaction.emoji
+  if (emoji.id !== emojiId) return
+  if (message.id !== messageId) return
+  if (reaction.message.guild.member(user.id).roles.cache.has("726000947175620629")) return
+  reaction.message.guild.member(user.id).roles.add("742271596579782746")
+})
 
-  let args = message.content.split( /\s+/ );
+const messageId1　= '742630590234361907'
+const channelId1 = '742623891301597194'
+const emojiId1 =　'726000967627046912'
+client.once('ready', () => {
+  client.channels.fetch(channelId1)
+    .then(channel => channel.messages.fetch(messageId1))
+    .catch(console.error)
+})
 
-  const command = arg.shift();
+client.on('messageReactionAdd', async (reaction,user) => {
+  const message = reaction.message
+  const emoji = reaction.emoji
+  if (emoji.id !== emojiId1) return
+  if (message.id !== messageId1) return
+  if (reaction.message.guild.member(user.id).roles.cache.has("742632018029969418")) return
+reaction.message.guild.member(user.id).roles.add("742632018029969418")
+})
 
-  const ch_name = args[0]; 
- 
-  if ( command === 'p!delete' )
+client.on("message", async message => {
+  // This event will run on every single message received, from any channel or DM.
 
-  {
+  // It's good practice to ignore other bots. This also makes your bot ignore itself
+  // and not get into a spam loop (we call that "botception").
 
-    let channel = message.guild.channels.cache.find(c=>c.name == ch_name);
+  // Also good practice to ignore any message that does not start with our prefix,
+  // which is set in the configuration file.
+  if (message.content.indexOf(prefix) !== 0) return;
 
- 
+  // Here we separate our "command" name, and our "arguments" for the command.
+  // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
+  // command = say
+  // args = ["Is", "this", "the", "real", "life?"]
+  const args = message.content
+    .slice(prefix.length)
+    .trim()
+    .split(/ +/g);
+  const command = args.shift().toLowerCase();
 
-    if ( channel )
+  if (command === "eval") {
+    // Put your userID here
+    if (message.author.id !== "645581794267234315") return;
 
-    {
-
-      const index = ch_log.channels.findIndex( (obj)=>{
-
-        return obj.ch_id === channel.id;
-
+    let evaled;
+    try {
+      evaled = await eval(args.join(" "));
+      message.channel.send(inspect(evaled));
+      message.react("check");
+      console.log(inspect(evaled));
+    } catch (error) {
+      console.error(error);
+      message.channel.send({
+        embed: {
+          color: 16757683,
+          title: "⚠エラーが発生しました…⚠",
+          description: "エラー内容```" + error + "```"
+        }
       });
-
- 
-
-      // 削除しようとしているユーザーが作成者かチェック
-
-      if ( message.member.id === ch_log.channels[index].user_id )
-
-      {
-
-        channel.delete()
-
-          .then( (ch) => {
-
-            // 削除したチャンネルじゃなければ削除メッセージを送信
-
-            if ( ch.id !== message.channel.id ) {
-
-              message.channel.send( ch_name + 'チャンネルを削除しました' );
-
-            }
-
- 
-
-            // 削除したチャンネルのログを削除してJSONファイルに出力
-
-            ch_log.channels.splice( index, 1 );
-
-            write_json( ch_log_filename, ch_log );
-
-          })
-
-          .catch( (err) => { console.log( err ); } );
-
-      }
-
-      else {
-
-        message.channel.send( ch_name + 'チャンネルを削除する権限がありません' );
-
-      }
-
+      message.react("uncheck");
     }
-
-    else {
-
-      message.channel.send( ch_name + 'チャンネルは存在しません' );
-
-    }
-
   }
 
-});
-
  
 
-client.login("");
+
+
+
+
+client.login("NzY3MTc0NzQzMDk0NTkxNTE5.X4uFKA.msf24strdI4TLlxFig8_G8GueIw");
