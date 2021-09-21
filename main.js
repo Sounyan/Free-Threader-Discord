@@ -159,4 +159,4 @@ client.on("message", async message => {
 
 
 
-client.login("NzY3MTc0NzQzMDk0NTkxNTE5.X4uFKA.msf24strdI4TLlxFig8_G8GueIw");
+client.login("一応隠しといたら？");
